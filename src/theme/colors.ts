@@ -4,6 +4,7 @@ const colors = {
     text: '#000',
     activeText: '#fff',
     toggleBackground: '#f0f0f0',
+    inactiveIcon: 'gray',
   };
   
   export default colors;

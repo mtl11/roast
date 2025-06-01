@@ -5,6 +5,9 @@ import { StyleSheet, Text, View } from "react-native";
 import Explore from "./src/screens/Explore";
 import { ExploreScreenHeader } from "./src/components/ExploreScreenHeader";
 import { PaperProvider } from "react-native-paper";
+import Ionicons from "@expo/vector-icons/Ionicons"; // Import Ionicons for icons
+import colors from "./src/theme/colors";
+
 // Placeholder screens
 function HomeScreen() {
   return (
@@ -14,10 +17,10 @@ function HomeScreen() {
   );
 }
 
-function ProfileScreen() {
+function AddScreen() {
   return (
     <View style={styles.container}>
-      <Text>Profile Screen</Text>
+      <Text>Add Screen</Text>
     </View>
   );
 }
@@ -36,20 +39,44 @@ export default function App() {
   return (
     <PaperProvider>
       <NavigationContainer>
-        <Tab.Navigator>
+        <Tab.Navigator
+          screenOptions={({ route }) => ({
+            tabBarIcon: ({ focused, color, size }) => {
+              let iconName: "search" | "search-outline" | "add-circle" | "add-circle-outline" | "home" | "home-outline" = "search";
+
+              if (route.name === "Explore") {
+                iconName = focused ? "search" : "search-outline";
+              } else if (route.name === "Add") {
+                iconName = focused ? "add-circle" : "add-circle-outline";
+              } else if (route.name === "Home") {
+                iconName = focused ? "home" : "home-outline";
+              }
+
+              // Return the Ionicons component
+              return <Ionicons name={iconName} size={28} color={color} />;
+            },
+            tabBarShowLabel: false, // Disable text labels
+            tabBarActiveTintColor:colors.primary, // Active tab color
+            tabBarInactiveTintColor: colors.inactiveIcon,
+            tabBarStyle: {
+              height: 70, // Adjust the height of the tab bar
+              paddingBottom: 5, // Add padding for better alignment
+            }, // Inactive tab color
+          })}
+        >
           <Tab.Screen
             name="Explore"
             component={Explore}
             options={{ header: () => <ExploreScreenHeader /> }}
           />
           <Tab.Screen
-            name="Profile"
-            component={ProfileScreen}
+            name="Add"
+            component={AddScreen}
             options={{ headerShown: false }}
           />
           <Tab.Screen
-            name="Settings"
-            component={SettingsScreen}
+            name="Home"
+            component={HomeScreen}
             options={{ headerShown: false }}
           />
         </Tab.Navigator>
