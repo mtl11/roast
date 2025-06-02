@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import {
   View,
   StyleSheet,
@@ -8,60 +8,29 @@ import {
   Pressable,
 } from "react-native";
 import {
-  Camera,
   CameraMode,
   CameraType,
   CameraView,
   useCameraPermissions,
 } from "expo-camera";
-import { Modal, Portal, TextInput, Button } from "react-native-paper";
+import { useNavigation } from "@react-navigation/native";
+
+import { Button } from "react-native-paper";
 import colors from "../theme/colors";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import Feather from "@expo/vector-icons/Feather";
-import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 export const AddScreen = () => {
+  const navigation = useNavigation();
+
   const [permission, requestPermission] = useCameraPermissions();
   const [facing, setFacing] = useState<CameraType>("back");
+  const [flashMode, setFlashMode] = useState<"on" | "off" | "auto">("off"); // Flash state
 
   const ref = useRef<CameraView>(null);
-  const [photo, setPhoto] = useState(null);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [location, setLocation] = useState("");
-  const [caption, setCaption] = useState("");
   const [mode, setMode] = useState<CameraMode>("picture");
   const [uri, setUri] = useState<string | null>(null);
-  const [recording, setRecording] = useState(false);
-
-  const takePhoto = async () => {
-    // if (cameraRef.current) {
-    //   const photoData = await cameraRef.current.takePictureAsync();
-    //   // quality: 0.5, // Adjust quality as needed
-    //   setPhoto(photoData.uri);
-    //   setModalVisible(true); // Open the modal after taking a photo
-    // }
-  };
-
-  const handleSave = () => {
-    console.log(
-      "Photo saved with location:",
-      location,
-      "and caption:",
-      caption
-    );
-    setModalVisible(false);
-    setPhoto(null);
-    setLocation("");
-    setCaption("");
-  };
-
-  const handleCancel = () => {
-    setModalVisible(false);
-    setPhoto(null);
-    setLocation("");
-    setCaption("");
-  };
 
   if (!permission) {
     // Camera permissions are still loading.
@@ -89,21 +58,6 @@ export const AddScreen = () => {
     setUri(photo.uri);
   };
 
-  const recordVideo = async () => {
-    if (recording) {
-      setRecording(false);
-      ref.current?.stopRecording();
-      return;
-    }
-    setRecording(true);
-    const video = await ref.current?.recordAsync();
-    console.log({ video });
-  };
-
-  const toggleMode = () => {
-    setMode((prev) => (prev === "picture" ? "video" : "picture"));
-  };
-
   const toggleFacing = () => {
     setFacing((prev) => (prev === "back" ? "front" : "back"));
   };
@@ -124,26 +78,46 @@ export const AddScreen = () => {
     );
   };
 
+  const toggleFlash = () => {
+    setFlashMode((prev) => {
+      if (prev === "off") return "on";
+      if (prev === "on") return "auto";
+      return "off";
+    });
+  };
+
   const renderCamera = () => {
     return (
-      <SafeAreaView style={styles.container}>
+      <View style={styles.container}>
         <CameraView
           style={styles.camera}
           ref={ref}
-          mode={mode}
+          mode={"picture"}
           facing={facing}
+          flash={flashMode}
           mute={false}
           responsiveOrientationWhenOrientationLocked
         >
+          <View style={styles.header}>
+            <TouchableOpacity
+              style={styles.headerButton}
+              onPress={() => navigation.goBack()}
+            >
+              <AntDesign name="close" size={24} color={colors.activeText} />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.headerButton}>
+              <Text style={styles.headerText}>Check In</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={toggleFlash} style={styles.headerButton}>
+              <Ionicons
+                name={flashMode === "on" ? "flash" : "flash-off"}
+                size={24}
+                color={colors.activeText}
+              />
+            </TouchableOpacity>
+          </View>
           <View style={styles.shutterContainer}>
-            <Pressable onPress={toggleMode}>
-              {mode === "picture" ? (
-                <AntDesign name="picture" size={32} color="white" />
-              ) : (
-                <Feather name="video" size={32} color="white" />
-              )}
-            </Pressable>
-            <Pressable onPress={mode === "picture" ? takePicture : recordVideo}>
+            <Pressable onPress={takePicture}>
               {({ pressed }) => (
                 <View
                   style={[
@@ -164,19 +138,16 @@ export const AddScreen = () => {
                 </View>
               )}
             </Pressable>
-            <Pressable onPress={toggleFacing}>
-              <FontAwesome6 name="rotate-left" size={32} color="white" />
-            </Pressable>
           </View>
         </CameraView>
-      </SafeAreaView>
+      </View>
     );
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       {uri ? renderPicture() : renderCamera()}
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -184,6 +155,27 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: "#fff",
     flex: 1,
+    height: "100%",
+  },
+  headerButton: {
+    paddingHorizontal: 15,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  header: {
+    width: "100%",
+    paddingVertical: 15,
+    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    position: "absolute",
+    top: 50,
+    left: 0,
+  },
+  headerText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: colors.activeText
   },
   camera: {
     flex: 1,
@@ -248,7 +240,7 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "center",
     paddingHorizontal: 30,
   },
   shutterBtn: {
