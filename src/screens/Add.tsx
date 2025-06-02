@@ -20,6 +20,7 @@ import colors from "../theme/colors";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import AddSelectedPicture from "../components/AddSelectedPicture";
 
 export const AddScreen = () => {
   const navigation = useNavigation();
@@ -146,7 +147,17 @@ export const AddScreen = () => {
 
   return (
     <View style={styles.container}>
-      {uri ? renderPicture() : renderCamera()}
+      {uri ? (
+        <AddSelectedPicture
+          uri={uri}
+          onRetake={() => setUri(null)}
+          onContinue={() => {
+            console.log("Continue");
+          }}
+        />
+      ) : (
+        renderCamera()
+      )}
     </View>
   );
 };
@@ -175,7 +186,7 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 20,
     fontWeight: "bold",
-    color: colors.activeText
+    color: colors.activeText,
   },
   camera: {
     flex: 1,
