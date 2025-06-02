@@ -7,28 +7,12 @@ import { ExploreScreenHeader } from "./src/components/ExploreScreenHeader";
 import { PaperProvider } from "react-native-paper";
 import Ionicons from "@expo/vector-icons/Ionicons"; // Import Ionicons for icons
 import colors from "./src/theme/colors";
-
+import { AddScreen } from "./src/screens/Add";
 // Placeholder screens
 function HomeScreen() {
   return (
     <View style={styles.container}>
       <Text>Home Screen</Text>
-    </View>
-  );
-}
-
-function AddScreen() {
-  return (
-    <View style={styles.container}>
-      <Text>Add Screen</Text>
-    </View>
-  );
-}
-
-function SettingsScreen() {
-  return (
-    <View style={styles.container}>
-      <Text>Settings Screen</Text>
     </View>
   );
 }
