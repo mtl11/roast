@@ -9,15 +9,8 @@ import { PaperProvider } from "react-native-paper";
 import Ionicons from "@expo/vector-icons/Ionicons"; // Import Ionicons for icons
 import colors from "./src/theme/colors";
 import { AddScreen } from "./src/screens/Add";
-
-// Placeholder Home Screen
-function HomeScreen() {
-  return (
-    <View style={styles.container}>
-      <Text>Home Screen</Text>
-    </View>
-  );
-}
+import { HomeScreen } from "./src/screens/Home";
+import Settings from "./src/screens/Settings";
 
 const Tab = createBottomTabNavigator();
 const RootStack = createStackNavigator();
@@ -48,7 +41,7 @@ function TabNavigator({ navigation }: { navigation: any }) {
         },
         tabBarShowLabel: false, // Disable text labels
         tabBarActiveTintColor: colors.primary, // Active tab color
-        tabBarInactiveTintColor: colors.inactiveIcon, // Inactive tab color
+        tabBarInactiveTintColor: colors.inactiveIcon,
       })}
     >
       <Tab.Screen
@@ -65,7 +58,11 @@ function TabNavigator({ navigation }: { navigation: any }) {
               onPress={() => navigation.navigate("Add")} // Navigate to AddScreen in RootStack
               style={styles.addButton}
             >
-              <Ionicons name="add-circle" size={40} color={colors.primary} />
+              <Ionicons
+                name="add-circle-outline"
+                size={28}
+                color={colors.inactiveIcon}
+              />
             </TouchableOpacity>
           ),
         }}
@@ -96,7 +93,14 @@ export default function App() {
             component={AddScreen}
             options={{
               // Makes it appear as a modal
-              headerShown: false, // Hide the header for the modal
+              headerShown: false
+            }}
+          />
+          <RootStack.Screen
+            name="Settings"
+            component={Settings}
+            options={{
+              headerShown: false
             }}
           />
         </RootStack.Navigator>
@@ -115,5 +119,6 @@ const styles = StyleSheet.create({
   addButton: {
     justifyContent: "center",
     alignItems: "center",
+    padding: 5,
   },
 });
