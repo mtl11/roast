@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import colors from "../theme/colors"; // Import the colors
 import ExploreList from "../components/ExploreList";
+import ExploreMap from "../components/ExploreMap";
 
 // Blank Map Component
 function MapComponent() {
@@ -37,7 +38,7 @@ export default function Explore() {
         </TouchableOpacity>
       </View>
       <View style={styles.contentContainer}>
-        {isListView ? <ExploreList /> : <MapComponent />}
+        {isListView ? <ExploreList /> : <ExploreMap />}
       </View>
     </View>
   );
