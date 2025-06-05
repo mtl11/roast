@@ -13,26 +13,28 @@ import * as Location from "expo-location";
 const MapsView = () => {
   const [currentStation, setCurrentStation] = useState<string | null>(null);
   const [showOverlayButton, setShowOverlayButton] = useState(false);
-  const [initialRegion, setInitialRegion] = useState<
-    | {
-        latitude: number;
-        longitude: number;
-        latitudeDelta: number;
-        longitudeDelta: number;
-      }
-    | undefined
-  >(undefined);
+  const [initialRegion, setInitialRegion] = useState<{
+    latitude: number;
+    longitude: number;
+    latitudeDelta: number;
+    longitudeDelta: number;
+  } | undefined>(undefined);
   const [loading, setLoading] = useState(true);
 
   const DUMMY_DATA = [
     {
-      id: "58694a0f-3da1-471f-bd96-145571e29d72",
+      id: "1",
       shopName: "Starbucks",
       distance: "10mi",
-      vibez: ["Awesome", "Good Lattes"],
-      signature: "Iced Vanilla Latte",
       latitude: 37.38799,
       longitude: -122.083,
+    },
+    {
+      id: "2",
+      shopName: "Blue Bottle Coffee",
+      distance: "5mi",
+      latitude: 37.39499,
+      longitude: -122.078,
     },
   ];
 
@@ -51,8 +53,8 @@ const MapsView = () => {
           setInitialRegion({
             latitude: location.coords.latitude,
             longitude: location.coords.longitude,
-            latitudeDelta: 0.02,
-            longitudeDelta: 0.02,
+            latitudeDelta: 0.01,
+            longitudeDelta: 0.01,
           });
         } else {
           console.log("Location data is unavailable");
@@ -63,26 +65,30 @@ const MapsView = () => {
         console.log(error);
       }
     };
-
+    console.log("Requesting location permissions...");
     getLocation();
   }, []);
 
   if (loading) {
-    return <ActivityIndicator />;
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#6200ee" />
+        <Text style={styles.loadingText}>Loading map...</Text>
+      </View>
+    );
   }
 
   return (
     <View style={styles.container}>
-      <MapView initialRegion={initialRegion} style={styles.map} ></MapView>
-
-      {/* <MapView
+      <MapView
         style={styles.map}
         initialRegion={initialRegion}
         showsCompass={true}
         showsScale={true}
         showsUserLocation={true}
-        followsUserLocation={true}
-        showsBuildings={false}
+        followsUserLocation={false}
+        showsBuildings={true}
+        showsPointsOfInterest={false} // Disable default POIs
       >
         {DUMMY_DATA.map((station) => (
           <Marker
@@ -99,12 +105,12 @@ const MapsView = () => {
             }}
           />
         ))}
-      </MapView> */}
+      </MapView>
 
       {showOverlayButton && (
         <TouchableOpacity style={styles.mapOverlayButton}>
           <View style={styles.overlayContent}>
-            <Text>{currentStation || ""}</Text>
+            <Text style={styles.overlayText}>{currentStation || ""}</Text>
             <TouchableOpacity
               onPress={() => {
                 setShowOverlayButton(false);
@@ -121,26 +127,49 @@ const MapsView = () => {
 
 const styles = StyleSheet.create({
   container: {
+    // flex: 1,
+    // backgroundColor: "#f5f5f5",
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f5f5f5",
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: "#333",
   },
   map: {
-    height: "100%",
-    width: "100%",
+    // flex: 1,
+    margin: 10, // Add margin for better spacing
+    borderRadius: 10, // Rounded corners for better UX
+    overflow: "hidden",
+    alignSelf: "center",
+    height: "100%", // Ensure the map takes full height
+    width: "100%", // Ensure the map takes full width
   },
   mapOverlayButton: {
     backgroundColor: "white",
     alignSelf: "center",
-    padding: "2%",
+    padding: 15,
     justifyContent: "center",
     position: "absolute",
     bottom: 30,
     borderRadius: 12,
-    width: "80%",
-    height: "10%",
+    width: "90%", // Wider overlay for better visibility
+    elevation: 5, // Add shadow for better UX
   },
   overlayContent: {
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingHorizontal: "2%",
+    alignItems: "center",
+  },
+  overlayText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#333",
   },
 });
 
