@@ -1,18 +1,8 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import colors from "../theme/colors"; // Import the colors
 import ExploreList from "../components/ExploreList";
 import ExploreMap from "../components/ExploreMap";
-
-// Blank Map Component
-function MapComponent() {
-  return (
-    <View style={styles.contentContainer}>
-      <Text>Map Component</Text>
-    </View>
-  );
-}
 
 export default function Explore() {
   const [isListView, setIsListView] = useState(true);
