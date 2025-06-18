@@ -15,6 +15,10 @@ import Settings from "./src/screens/Settings";
 const Tab = createBottomTabNavigator();
 const RootStack = createStackNavigator();
 
+function AddNullComponent() {
+  return null;
+}
+
 function TabNavigator({ navigation }: { navigation: any }) {
   return (
     <Tab.Navigator
@@ -39,19 +43,26 @@ function TabNavigator({ navigation }: { navigation: any }) {
           // Return the Ionicons component
           return <Ionicons name={iconName} size={28} color={color} />;
         },
-        tabBarShowLabel: false, // Disable text labels
+        tabBarShowLabel: true, // Enable text labels
         tabBarActiveTintColor: colors.primary, // Active tab color
         tabBarInactiveTintColor: colors.inactiveIcon,
+        tabBarLabelStyle: {
+          fontSize: 12, // Adjust font size for labels
+          fontWeight: "600", // Make labels slightly bold
+        },
       })}
     >
       <Tab.Screen
         name="Explore"
         component={Explore}
-        options={{ header: () => <ExploreScreenHeader /> }}
+        options={{
+          header: () => <ExploreScreenHeader />,
+          tabBarLabel: "Explore", // Label for the Explore tab
+        }}
       />
       <Tab.Screen
         name="Add"
-        component={() => null} // Empty component for the Add tab
+        component={AddNullComponent} // Empty component for the Add tab
         options={{
           tabBarButton: (props) => (
             <TouchableOpacity
@@ -63,6 +74,7 @@ function TabNavigator({ navigation }: { navigation: any }) {
                 size={28}
                 color={colors.inactiveIcon}
               />
+              <Text style={styles.tabLabel}>Add</Text>
             </TouchableOpacity>
           ),
         }}
@@ -70,7 +82,10 @@ function TabNavigator({ navigation }: { navigation: any }) {
       <Tab.Screen
         name="Home"
         component={HomeScreen}
-        options={{ headerShown: false }}
+        options={{
+          headerShown: false,
+          tabBarLabel: "Home", // Label for the Home tab
+        }}
       />
     </Tab.Navigator>
   );
@@ -93,14 +108,14 @@ export default function App() {
             component={AddScreen}
             options={{
               // Makes it appear as a modal
-              headerShown: false
+              headerShown: false,
             }}
           />
           <RootStack.Screen
             name="Settings"
             component={Settings}
             options={{
-              headerShown: false
+              headerShown: false,
             }}
           />
         </RootStack.Navigator>
@@ -120,5 +135,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 5,
+  },
+  tabLabel: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: colors.inactiveIcon, // Matches inactive icon color
+    marginTop: 2, // Add spacing between the icon and label
   },
 });
