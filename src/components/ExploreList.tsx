@@ -1,40 +1,47 @@
-import React from 'react';
-import { FlatList, StyleSheet, TouchableOpacity } from 'react-native';
-import { Card, Text } from 'react-native-paper';
-import colors from '../theme/colors';
+import React from "react";
+import { FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Card, Text } from "react-native-paper";
+import colors from "../theme/colors";
+import { COFFEE_SHOPS } from "../data/coffee-shops-data"; // Import the coffee shop data
 
-const DATA = [
-  { id: '1', title: 'Item 1' },
-  { id: '2', title: 'Item 2' },
-  { id: '3', title: 'Item 3' },
-  { id: '4', title: 'Item 4' },
-  { id: '5', title: 'Item 5' },
-];
+function RowComponent({ id }: { id: string }) {
+  // Find the coffee shop by id
+  const shop = COFFEE_SHOPS.find((shop) => shop.id === id);
 
-// Row Component
-function RowComponent({ title }: { title: string }) {
+  if (!shop) {
+    return null; // If no shop is found, return null
+  }
+
   const handlePress = () => {
-    console.log(`Row clicked: ${title}`);
+    console.log(`Row clicked: ${shop.name}`);
   };
 
   return (
     <TouchableOpacity onPress={handlePress} style={styles.row}>
       <Card style={styles.card}>
         <Card.Content>
-          <Text style={styles.rowText}>{title}</Text>
+          <Text style={styles.shopName}>{shop.name}</Text>
+          <Text style={styles.shopAddress}>{shop.address.fullAddress}</Text>
+          <View style={styles.rowDetails}>
+            <Text style={styles.shopRating}>Rating: {shop.rating} ⭐</Text>
+          </View>
+          {shop.specialty && (
+            <Text style={styles.shopSpecialty}>
+              Specialty: {shop.specialty.join(", ")}
+            </Text>
+          )}
         </Card.Content>
       </Card>
     </TouchableOpacity>
   );
 }
 
-// ListView Component
 export default function ExploreList() {
   return (
     <FlatList
-      data={DATA}
+      data={COFFEE_SHOPS}
       keyExtractor={(item) => item.id}
-      renderItem={({ item }) => <RowComponent title={item.title} />}
+      renderItem={({ item }) => <RowComponent id={item.id} />}
       contentContainerStyle={styles.listContainer}
     />
   );
@@ -43,20 +50,41 @@ export default function ExploreList() {
 const styles = StyleSheet.create({
   listContainer: {
     paddingVertical: 10,
-    height: '100%',
+    height: "100%",
   },
   row: {
-    width: '90%',
+    width: "90%",
     marginVertical: 5,
     borderRadius: 8,
-    alignSelf: 'center',
-  },
-  rowText: {
-    fontSize: 16,
-    color: '#000',
+    alignSelf: "center",
   },
   card: {
-    backgroundColor: colors.toggleBackground, // Change this to your desired card color
+    backgroundColor: colors.toggleBackground,
     borderRadius: 8,
+  },
+  shopName: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#000",
+  },
+  shopAddress: {
+    fontSize: 14,
+    color: "#555",
+    marginVertical: 5,
+  },
+  rowDetails: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 10,
+  },
+  shopRating: {
+    fontSize: 14,
+    color: "#000",
+  },
+  shopSpecialty: {
+    fontSize: 14,
+    color: "#333",
+    marginTop: 10,
+    fontStyle: "italic",
   },
 });
